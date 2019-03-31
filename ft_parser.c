@@ -1,16 +1,17 @@
 #include "ft_nm_otool.h"
-#include "fat.h"
 
 static int  ft_parser_arch64(char *data, int flag)
 {
     struct mach_header_64   *header64;
     struct load_command     *load;
     int                     i;
+    int                     count;
 
     header64 = (struct mach_header_64*)data;
-    i = -1;
     load = (void*)data + sizeof(struct mach_header_64);
-    while (++i < header64->ncmds)
+    count = header64->ncmds;
+    i = -1;
+    while (++i < count)
     {
         if (load->cmd == LC_SEGMENT_64)
             ;
@@ -60,5 +61,5 @@ int         ft_data_parser(char *file_name, char *data, int flag)
         return (ft_parser_fat(data, flag));
     if (!ft_strncmp(data, ARMAG, SARMAG))
         return (ft_parser_arm(data + SARMAG, flag));
-    return (ft_error("Error: unknow architecture:", file_name));
+    return 0;
 }
