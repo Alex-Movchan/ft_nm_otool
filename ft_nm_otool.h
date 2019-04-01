@@ -28,24 +28,31 @@ typedef enum	e_arch
 	ARMIVE
 }				t_arch;
 
+struct      s_object;
+
 typedef struct s_dtata
 {
-    int         (*data_destructor)(void *,struct s_dtata *);
+
 }				t_data;
 
 typedef struct	s_methods
 {
-	int			(*parser)(void *);
-	void		(*print)(struct s_dtata *, int);
+	int        (*destructor_mtd)(struct s_object *);
+    t_arch      (*get_event_arch)(struct s_object *);
+    int         (*constructor_mtd)(struct s_object *);
+    int			(*parser)(struct s_object *);
+    void		(*print)(struct s_object *);
 }				t_methods;
 
 typedef struct s_event
 {
-    int         (*event_validetion)(void *);
-    int         (*ft_event_hendler)(void *);
-    int         (*event_initmethods)(void *);
-    int         (*event_hendler_destructor)(void *);
-    t_arch      (*get_event_arch)(struct s_event *);
+    void         (*event_constructor)(struct s_object *);
+    int         (*event_destructor)(struct s_object *);
+    int         (*event_validetion)(struct s_object *);
+    int         (*ft_event_hendler)(struct s_object *);
+    int         (*event_hendler_destructor)(struct s_object *);
+    int         (*event_crash)(struct s_object *, char *, char *);
+    int         (*cllback_fat)(struct s_object *);
     char        *file_name;
     char        *data_buff;
     t_data      *data;
@@ -56,22 +63,25 @@ typedef struct s_event
 
 typedef struct      s_object
 {
-	int			    (*crash)(char *, char *);
+    void            (*object_cronstructor)(struct s_object *);
+    int             (*object_destructor)(struct s_object *);
+    int			    (*object_crash_destructor)(struct s_object *, char *, char *);
     int			    (*init_flag)(struct s_object *, int, char **);
     int			    (*object_process)(struct s_object *, int, char **);
-    int             (*cllback_fat)(void *);
     t_event         event;
     unsigned int    flag;
 }				    t_object;
 
 
 
-t_event         ft_event_init(void);
+void            ft_event_init(t_object *ptr_obj);
 int         	ft_error(char *msg, char *param);
 int         	ft_check_flag(int ac, char **av);
-int             pars_arch64_mtd(void *patern);
-int             pars_arch32_mtd(void *patern);
-void            ft_object_create(t_object *ptr_obj, int ac, char **av);
+int             pars_arch64_mtd(t_object *ptr_obj);
+int             pars_arch32_mtd(t_object *ptr_obj);
+void            ft_object_cronstructor(t_object *ptr_obj);
+int             ft_destructor_mtd(t_object *ptr_obj);
+int             ft_constructor_mtd(t_object *ptr_obj);
 
 
 #endif
