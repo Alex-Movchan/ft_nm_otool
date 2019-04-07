@@ -21,21 +21,22 @@ int     ft_event_hendler_destructor(t_object *ptr_obj)
         return (EXIT_FAILURE);
     ptr_obj->event.methods.destructor_mtd(ptr_obj);
     if (munmap(ptr_obj->event.data_buff, (size_t)ptr_obj->event.spcf.st_size) == EXIT_FAILURE)
-        return (ptr_obj->event.event_crash(ptr_obj, "Error: munmap file:", ptr_obj->event.file_name));
+        return (ptr_obj->event.event_crash(ptr_obj, "Error: munmap file:", ptr_obj->event.file_name, SYSTEM_ERROR));
     ptr_obj->event.data_buff = NULL;
     return (EXIT_SUCCESS);
 }
 
-int     ft_event_crash_destructor(t_object *ptr_obj, char *msg1, char *msg2)
+int     ft_event_crash_destructor(t_object *ptr_obj, char *msg1, char *msg2, t_crash_lvl lvl)
 {
     if (!ptr_obj)
         return (EXIT_FAILURE);
-    if (ptr_obj->event.data_buff && munmap(ptr_obj->event.data_buff, (size_t)ptr_obj->event.spcf.st_size) == EXIT_FAILURE)
+    if (ptr_obj->event.data_buff && munmap(ptr_obj->event.data_buff,
+            (size_t)ptr_obj->event.spcf.st_size) == EXIT_FAILURE)
         return (ptr_obj->object_crash_destructor(ptr_obj, msg1, msg2));
     if (ptr_obj->event.event_destructor(ptr_obj) == EXIT_FAILURE)
         return (ptr_obj->object_crash_destructor(ptr_obj, msg1, msg2));
     ptr_obj->event.data_buff = NULL;
-    return (EXIT_SUCCESS);
+    return (EXIT_FAILURE);
 }
 
 int     ft_object_event_hendler(t_object *ptr_obj)
@@ -45,14 +46,19 @@ int     ft_object_event_hendler(t_object *ptr_obj)
     if (!ptr_obj)
         return (EXIT_FAILURE);
     if ((fd = ptr_obj->event.event_validetion(ptr_obj)) == EXIT_FAILURE)
-        return (ptr_obj->event.event_crash(ptr_obj, "Error: is not binary file", ptr_obj->event.file_name));
+        return (ptr_obj->event.event_crash(ptr_obj, "Error: is not binary file",
+                ptr_obj->event.file_name, SYSTEM_ERROR));
     if ((ptr_obj->event.data_buff = mmap(0, (size_t) ptr_obj->event.spcf.st_size,
             PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FILE)
-        return (ptr_obj->event.event_crash(ptr_obj, "Error: nmap file", ptr_obj->event.file_name));
+        return (ptr_obj->event.event_crash(ptr_obj, "Error: nmap file", ptr_obj->event.file_name, SYSTEM_ERROR));
     if (ptr_obj->event.methods.constructor_mtd(ptr_obj) == EXIT_FAILURE)
-        return (ptr_obj->event.event_crash(ptr_obj, NULL, NULL));
+    {
+        return (ptr_obj->event.event_crash(ptr_obj,
+             "Error: unknown architecture:", ptr_obj->event.file_name, ERROR_EVENT));
+    }
     if (ptr_obj->event.methods.parser(ptr_obj) == EXIT_FAILURE)
-        return (ptr_obj->event.event_crash(ptr_obj, NULL, NULL));
+        return (ptr_obj->event.event_crash(ptr_obj,
+             "Error: parsing file ", ptr_obj->event.file_name, ERROR_EVENT));
     ptr_obj->event.methods.print(ptr_obj);
     return (ptr_obj->event.event_hendler_destructor(ptr_obj));
 }

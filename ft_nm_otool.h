@@ -18,10 +18,35 @@
 #define FLAG_UP_U  3
 #define FLAG_P  4
 #define FLAG_R  5
+#ifndef FT_OTOOL
+#ifndef FT_NM
+#define PROGRAM_STATE 0
+#else
+#define PROGRAM_STATE 2
+#endif
+#else
+#define PROGRAM_STATE 1
+#endif
+
+typedef enum	e_crash_lvl
+{
+    CRITICAL,
+    MULL_PTR,
+    SYSTEM_ERROR,
+    WORNING,
+    ERROR_EVENT
+}               t_crash_lvl;
+
+typedef enum	e_program_state
+{
+    UNKNOWN_PROGRAM,
+    OTOOL_PROGRAM,
+    NM_PROGRAM
+}               t_ptogram_state;
 
 typedef enum	e_arch
 {
-    UNKNOW,
+    UNKNOWN,
 	FAT,
 	ARCH32,
 	ARCH64,
@@ -51,7 +76,7 @@ typedef struct s_event
     int         (*event_validetion)(struct s_object *);
     int         (*ft_event_hendler)(struct s_object *);
     int         (*event_hendler_destructor)(struct s_object *);
-    int         (*event_crash)(struct s_object *, char *, char *);
+    int         (*event_crash)(struct s_object *, char *, char *, t_crash_lvl );
     int         (*cllback_fat)(struct s_object *);
     char        *file_name;
     char        *data_buff;

@@ -1,24 +1,6 @@
 #include "ft_nm_otool.h"
 
-static int  ft_parser_arch64(char *data, int flag)
-{
-    struct mach_header_64   *header64;
-    struct load_command     *load;
-    int                     i;
-    int                     count;
 
-    header64 = (struct mach_header_64*)data;
-    load = (void*)data + sizeof(struct mach_header_64);
-    count = header64->ncmds;
-    i = -1;
-    while (++i < count)
-    {
-        if (load->cmd == LC_SEGMENT_64)
-            ;
-        load = (void*)load + load->cmdsize;
-    }
-    return (EXIT_SUCCESS);
-}
 
 static int  ft_parser_arch32(char *data, int flag)
 {

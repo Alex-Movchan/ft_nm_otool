@@ -15,7 +15,7 @@ t_arch      ft_get_arch(t_object *ptr_obj)
     unsigned int    magic;
 
     if (!ptr_obj)
-        return (UNKNOW);
+        return (UNKNOWN);
     magic = *(unsigned int *)ptr_obj->event.data_buff;
     if (magic == MH_MAGIC_64)
         return (ARCH64);
@@ -25,7 +25,7 @@ t_arch      ft_get_arch(t_object *ptr_obj)
         return  (FAT);
     if (!ft_strncmp(ptr_obj->event.data_buff, ARMAG, SARMAG))
         return (ARMIVE);
-    return (UNKNOW);
+    return (UNKNOWN);
 }
 
 int    ft_constructor_mtd(t_object *ptr_obj)
@@ -36,8 +36,8 @@ int    ft_constructor_mtd(t_object *ptr_obj)
         return (EXIT_FAILURE);
     ptr_obj->event.methods.destructor_mtd = ft_destructor_mtd;
     ptr_obj->event.methods.get_event_arch = ft_get_arch;
-    if ((arch = ptr_obj->event.methods.get_event_arch(ptr_obj)) == UNKNOW)
-        return (ptr_obj->event.event_crash(ptr_obj, "Error: unknow architecture:", ptr_obj->event.file_name));
+    if ((arch = ptr_obj->event.methods.get_event_arch(ptr_obj)) == UNKNOWN)
+        return (EXIT_FAILURE);
     if (arch == FAT)
         return (ptr_obj->event.cllback_fat(ptr_obj));
     if (arch == ARMIVE)
