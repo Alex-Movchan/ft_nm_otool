@@ -1,16 +1,5 @@
 #include "ft_nm_otool.h"
 
-int     ft_data_from_section(t_object *ptr_obj, struct section_64 *section)
-{
-    t_data  *ptr;
-    if (!ptr_obj || !section)
-        return (EXIT_FAILURE);
-    if ((ptr = ft_get_new_data_in_list(&(ptr_obj->event.data))) == NULL)
-        return (ptr_obj->event.event_crash(ptr_obj, "Error: create new data_list", NULL, ERROR_EVENT));
-
-    return (EXIT_SUCCESS);
-}
-
 int     pars_segment_arch64(t_object *ptr_obj, void *load_cmd)
 {
     struct segment_command_64	*segment;
@@ -49,7 +38,11 @@ int  ft_parser_arch64(t_object *ptr_obj)
             if (pars_segment_arch64(ptr_obj, load) == EXIT_FAILURE)
                 return (EXIT_FAILURE);
         }
-        ;
+        if (load->cmd == LC_SYMTAB)//to do: add filag fir onli 1 checking
+        {
+//            if (pars_symtab(ptr_obj, (void*)load) == EXIT_FAILURE)
+//                return (EXIT_FAILURE);
+        }
         load = (void*)load + load->cmdsize;
     }
     return (EXIT_SUCCESS);

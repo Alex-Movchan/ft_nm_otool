@@ -3,9 +3,9 @@
 #define FT_NM_OTOOL_H
 
 #include "libft/libft.h"
-#include <mach-o/loader.h>
-#include <mach-o/ranlib.h>
-#include <mach-o/fat.h>
+#include "mach-o/loader.h"
+#include "mach-o/ranlib.h"
+#include "mach-o/fat.h"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -13,7 +13,7 @@
 
 #define SET_BIT(a, n) ((a) |= (1 << n))
 #define RESET_BIT(a, n) ((a) &= ~(1 << n))
-#define CHECK_BIT(a, n) ((a) &= (1 << n))
+#define CHECK_BIT(a, n) ((a) & (1 << n))
 #define FLAG_J  1
 #define FLAG_U  2
 #define FLAG_UP_U  3
@@ -68,6 +68,7 @@ typedef struct		s_methods
 	int				(*destructor_mtd)(struct s_object *);
 	t_arch			(*get_event_arch)(struct s_object *);
 	int				(*constructor_mtd)(struct s_object *);
+	int             (*sort_cmp)(void*, void*);
 	int				(*parser)(struct s_object *);
 	void			(*print)(struct s_object *);
 }					t_methods;
@@ -110,6 +111,7 @@ void            ft_object_cronstructor(t_object *ptr_obj);
 int             ft_destructor_mtd(t_object *ptr_obj);
 int             ft_constructor_mtd(t_object *ptr_obj);
 int  			ft_parser_arch64(t_object *ptr_obj);
+int             ft_data_from_section(t_object *ptr_obj, void *ptr_data);
 
 
 #endif
