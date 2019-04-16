@@ -1,6 +1,6 @@
 #include "ft_nm_otool.h"
 
-int         ft_init_nm_flag(t_object *ptr_obj, int ac, char **av)
+static int ft_init_nm_flag(t_object *ptr_obj, int ac, char **av)
 {
     if (!ptr_obj)
         return (EXIT_FAILURE);
@@ -10,7 +10,7 @@ int         ft_init_nm_flag(t_object *ptr_obj, int ac, char **av)
 }
 
 
-int         ft_object_process(t_object *ptr_obj, int ac, char **av)
+static int ft_object_process(t_object *ptr_obj, int ac, char **av)
 {
     int     i;
 
@@ -24,12 +24,16 @@ int         ft_object_process(t_object *ptr_obj, int ac, char **av)
             continue ;
         ptr_obj->event.file_name = av[i];
         if (ptr_obj->event.ft_event_hendler((void*)ptr_obj) == EXIT_FAILURE)
-            return (EXIT_FAILURE);
+        {
+            if (ptr_obj->event.error_lvl > WORNING)
+                return (EXIT_FAILURE);
+            ptr_obj->event.error_lvl = SUCCESS;
+        }
     }
     return (EXIT_SUCCESS);
 }
 
-int			    ft_object_destructor(t_object *ptr_obj)
+static int ft_object_destructor(t_object *ptr_obj)
 {
     if (!ptr_obj)
         return (EXIT_FAILURE);
@@ -37,7 +41,8 @@ int			    ft_object_destructor(t_object *ptr_obj)
         return (EXIT_FAILURE);
     return (EXIT_SUCCESS);
 }
-int			    ft_object_crash(t_object *ptr_obj, char *msg1, char *msg2)
+
+static int	ft_object_crash(t_object *ptr_obj, char *msg1, char *msg2)
 {
     if (!ptr_obj)
         return (EXIT_FAILURE);

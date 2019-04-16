@@ -14,11 +14,13 @@
 #define SET_BIT(a, n) ((a) |= (1 << n))
 #define RESET_BIT(a, n) ((a) &= ~(1 << n))
 #define CHECK_BIT(a, n) ((a) & (1 << n))
+#define BYTE 8
 #define FLAG_J  1
 #define FLAG_U  2
 #define FLAG_UP_U  3
 #define FLAG_P  4
 #define FLAG_R  5
+#define FLAG_FAT  8
 #ifndef FT_OTOOL
 #ifndef FT_NM
 #define PROGRAM_STATE 0
@@ -31,11 +33,13 @@
 
 typedef enum	e_crash_lvl
 {
-    CRITICAL,
-    MULL_PTR,
-    SYSTEM_ERROR,
+    SUCCESS,
+    ERROR_EVENT,
     WORNING,
-    ERROR_EVENT
+    SYSTEM_ERROR,
+    NULL_PTR,
+    CRITICAL
+
 }               t_crash_lvl;
 
 typedef enum	e_program_state
@@ -44,6 +48,13 @@ typedef enum	e_program_state
     OTOOL_PROGRAM,
     NM_PROGRAM
 }               t_ptogram_state;
+
+typedef enum	e_arch64_data_type
+{
+    UNKNOWN_DATA,
+    SECTION,
+    SYMTAB,
+}				t_arch64;
 
 typedef enum	e_arch
 {
@@ -63,15 +74,16 @@ typedef struct		s_data
 	int 			seqnum;
 }					t_data;
 
-typedef struct		s_methods
+typedef struct		s_arch_methods
 {
-	int				(*destructor_mtd)(struct s_object *);
-	t_arch			(*get_event_arch)(struct s_object *);
-	int				(*constructor_mtd)(struct s_object *);
-	int             (*sort_cmp)(void*, void*);
-	int				(*parser)(struct s_object *);
-	void			(*print)(struct s_object *);
-}					t_methods;
+	int             (*constructor_mtd)(struct s_object *);
+    int             (*destructor_mtd)(struct s_object *);
+    t_arch          (*get_event_arch)(struct s_object *);
+    int             (*parser)(struct s_object *);
+    int             (*sort_cmp)(void*, void*);
+    int (*new_data)(struct s_object *, void *, int);
+    void            (*print)(struct s_object *);
+}					t_arch_methods;
 
 typedef struct		s_event
 {
@@ -82,11 +94,14 @@ typedef struct		s_event
 	int				(*event_hendler_destructor)(struct s_object *);
 	int				(*event_crash)(struct s_object *, char *, char *, t_crash_lvl );
 	int				(*cllback_fat)(struct s_object *);
+	void            (*free_data)(t_data **);
 	char			*file_name;
-	char			*data_buff;
+	void			*data_buff;
 	t_data			*data;
-	t_methods		methods;
+    t_arch_methods  methods;
 	struct stat		spcf;
+	unsigned int    offset;
+    t_crash_lvl     error_lvl;
 }					t_event;
 
 typedef struct      s_object
@@ -105,13 +120,15 @@ typedef struct      s_object
 void            ft_event_init(t_object *ptr_obj);
 int         	ft_error(char *msg, char *param);
 int         	ft_check_flag(int ac, char **av);
-int             pars_arch64_mtd(t_object *ptr_obj);
 int             pars_arch32_mtd(t_object *ptr_obj);
 void            ft_object_cronstructor(t_object *ptr_obj);
 int             ft_destructor_mtd(t_object *ptr_obj);
 int             ft_constructor_mtd(t_object *ptr_obj);
-int  			ft_parser_arch64(t_object *ptr_obj);
-int             ft_data_from_section(t_object *ptr_obj, void *ptr_data);
+int             ft_parser_arch64(t_object *ptr_obj);
+int             ft_cmp_arch64(void *ptr1, void *ptr2);
+void            ft_free_datalist(t_data **head);
+int             ft_add_datalist(t_object *ptr_obj, void *ptr_data, int seqnum);
+int     ft_event_destructor(t_object *ptr_obj);
 
 
 #endif

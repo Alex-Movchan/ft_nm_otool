@@ -1,6 +1,6 @@
 #include "ft_nm_otool.h"
 
-t_data		*ft_create_new_data(void)
+static t_data   *ft_create_new_data(void)
 {
     t_data		*new_data;
 
@@ -12,7 +12,7 @@ t_data		*ft_create_new_data(void)
     return (new_data);
 }
 
-t_data		*ft_add_data_to_list(t_data **head)
+static t_data	*ft_add_data_to_list(t_data **head)
 {
     t_data	*ptr;
 
@@ -35,7 +35,7 @@ t_data		*ft_add_data_to_list(t_data **head)
     }
 }
 
-t_data		*ft_add_data_to_list_rev(t_data **head)
+static t_data	*ft_add_data_to_list_rev(t_data **head)
 {
     t_data	*ptr;
 
@@ -47,7 +47,7 @@ t_data		*ft_add_data_to_list_rev(t_data **head)
     return (ptr);
 }
 
-t_data		*ft_add_data_to_sorted_list(t_data **head, void *ptr_data, int(*cmp)(void*, void*))
+static t_data	*ft_add_data_to_sorted_list(t_data **head, void *ptr_data, int(*cmp)(void*, void*))
 {
     t_data  *tmp;
     t_data	*ptr;
@@ -58,15 +58,17 @@ t_data		*ft_add_data_to_sorted_list(t_data **head, void *ptr_data, int(*cmp)(voi
     if (*head)
     {
         tmp = (*head);
-        while (tmp->next && cmp(tmp->ptr_data, ptr->ptr_data))
+        while (tmp->next && cmp(tmp->ptr_data, ptr->ptr_data) > 0)
             tmp = tmp->next;
         ptr->next = tmp->next;
         tmp->next = ptr;
     }
+    else
+        (*head) = ptr;
     return (ptr);
 }
 
-int ft_data_from_section(t_object *ptr_obj, void *ptr_data)
+int             ft_add_datalist(t_object *ptr_obj, void *ptr_data, int seqnum)
 {
     t_data  *ptr;
 
@@ -85,6 +87,6 @@ int ft_data_from_section(t_object *ptr_obj, void *ptr_data)
         return (ptr_obj->event.event_crash(ptr_obj,
                 "Error: create new data_list", NULL, ERROR_EVENT));
     ptr->ptr_data = ptr_data;
-    ptr->seqnum = -1;
+    ptr->seqnum = seqnum;
     return (EXIT_SUCCESS);
 }
