@@ -1,6 +1,6 @@
 #include "ft_nm_otool.h"
 
-int     pars_segment_arch64(t_object *ptr_obj, void *load_cmd)
+static int     pars_segment_arch64(t_object *ptr_obj, void *load_cmd)
 {
     struct segment_command_64	*segment;
     struct section_64			*section;
@@ -13,11 +13,16 @@ int     pars_segment_arch64(t_object *ptr_obj, void *load_cmd)
     section = (void *)segment + sizeof(segment);
     while (++idx < count)
     {
-        if (ft_data_from_section(ptr_obj, section) == EXIT_FAILURE)
+        if (ptr_obj->event.methods.new_data(ptr_obj, section, SECTION) == EXIT_FAILURE)
             return (EXIT_FAILURE);
         section = (void *)section + sizeof(section);
     }
     return (EXIT_SUCCESS);
+}
+
+static int ft_pars_symtab(t_object *ptr_obj, void *ptr_data)
+{
+
 }
 
 int  ft_parser_arch64(t_object *ptr_obj)

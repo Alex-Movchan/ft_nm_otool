@@ -7,7 +7,17 @@ int     ft_cmp_arch64(void *ptr1, void *ptr2)
 
     section1 = (struct section_64 *)ptr1;
     section2 = (struct section_64 *)ptr2;
-    return (ft_strcmp(section1->sectname, section2->sectname))
+    return (ft_strcmp(section1->sectname, section2->sectname));
+}
+
+int     ft_cmp_arch32(void *ptr1, void *ptr2)
+{
+    struct section	*section1;
+    struct section	*section2;
+
+    section1 = (struct section *)ptr1;
+    section2 = (struct section *)ptr2;
+    return (ft_strcmp(section1->sectname, section2->sectname));
 }
 
 void    ft_free_datalist(t_data **head)

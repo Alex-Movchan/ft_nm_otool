@@ -39,16 +39,17 @@ unsigned int get_fat_offset(void *ptr)
     return (offset);
 }
 
-int ft_event_fat_hendler(t_object *ptr_obj)
+t_arch ft_event_fat_hendler(t_object *ptr_obj)
 {
     void            *data_cpy;
     unsigned int    offset;
 
     if (!ptr_obj)
-        return (EXIT_FAILURE);
+        return (UNKNOWN);
     if ((offset = get_fat_offset(ptr_obj->event.data_buff)) == 0)
-        return (EXIT_FAILURE);
+        return (UNKNOWN);
     data_cpy = ptr_obj->event.data_buff;
     ptr_obj->event.data_buff = data_cpy + offset;
     ptr_obj->event.offset += offset;
+    return (ptr_obj->event.methods.get_event_arch(ptr_obj));
 }

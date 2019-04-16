@@ -43,7 +43,7 @@ int    ft_constructor_mtd(t_object *ptr_obj)
     {
         ptr_obj->event.methods.print = NULL; //To do!
         ptr_obj->event.methods.parser = (ARCH64 == arch) ? ft_parser_arch64 : pars_arch32_mtd;
-        ptr_obj->event.methods.sort_cmp = ft_cmp_arch64;
+        ptr_obj->event.methods.sort_cmp = (ARCH64 == arch) ? ft_cmp_arch64 : ft_cmp_arch32;
     }
     return (EXIT_SUCCESS);
 }
@@ -54,6 +54,6 @@ int    ft_destructor_mtd(t_object *ptr_obj)
         return (EXIT_FAILURE);
     ptr_obj->event.methods.print = NULL;
     ptr_obj->event.methods.parser = NULL;
-    //to do: free ptr_obj->event.data;
+    ptr_obj->event.methods.sort_cmp = NULL;
     return (EXIT_SUCCESS);
 }

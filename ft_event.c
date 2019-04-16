@@ -12,6 +12,7 @@ static int ft_event_validetion(t_object *ptr_obj)
     if (fstat(fd, &ptr_obj->event.spcf) < 0)
         return (ptr_obj->event.event_crash(ptr_obj,
         		"Error: can not get stat:", ptr_obj->event.file_name, ERROR_EVENT));
+    ptr_obj->event.offset = 0;
     if (S_ISREG(ptr_obj->event.spcf.st_mode)
     	|| S_ISLNK(ptr_obj->event.spcf.st_mode) || S_ISSOCK(ptr_obj->event.spcf.st_mode))
         return (fd);
@@ -89,7 +90,7 @@ void     ft_event_init(t_object *ptr_obj)
     ptr_obj->event.ft_event_hendler = ft_object_event_hendler;
     ptr_obj->event.event_hendler_destructor = ft_event_hendler_destructor;
     ptr_obj->event.event_crash = ft_event_crash_destructor;
-    ptr_obj->event.cllback_fat = NULL; // To go!!
+    ptr_obj->event.cllback_fat = ft_event_fat_hendler;
     ptr_obj->event.methods.constructor_mtd = ft_constructor_mtd;
     ptr_obj->event.event_destructor = ft_event_destructor;
     ptr_obj->event.free_data = ft_free_datalist;

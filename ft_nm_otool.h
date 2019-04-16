@@ -3,9 +3,9 @@
 #define FT_NM_OTOOL_H
 
 #include "libft/libft.h"
-#include "mach-o/loader.h"
-#include "mach-o/ranlib.h"
-#include "mach-o/fat.h"
+#include <mach-o/loader.h>
+#include <mach-o/ranlib.h>
+#include <mach-o/fat.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -20,7 +20,6 @@
 #define FLAG_UP_U  3
 #define FLAG_P  4
 #define FLAG_R  5
-#define FLAG_FAT  8
 #ifndef FT_OTOOL
 #ifndef FT_NM
 #define PROGRAM_STATE 0
@@ -93,7 +92,7 @@ typedef struct		s_event
 	int				(*ft_event_hendler)(struct s_object *);
 	int				(*event_hendler_destructor)(struct s_object *);
 	int				(*event_crash)(struct s_object *, char *, char *, t_crash_lvl );
-	int				(*cllback_fat)(struct s_object *);
+    t_arch			(*cllback_fat)(struct s_object *);
 	void            (*free_data)(t_data **);
 	char			*file_name;
 	void			*data_buff;
@@ -116,7 +115,6 @@ typedef struct      s_object
 }				    t_object;
 
 
-
 void            ft_event_init(t_object *ptr_obj);
 int         	ft_error(char *msg, char *param);
 int         	ft_check_flag(int ac, char **av);
@@ -126,9 +124,11 @@ int             ft_destructor_mtd(t_object *ptr_obj);
 int             ft_constructor_mtd(t_object *ptr_obj);
 int             ft_parser_arch64(t_object *ptr_obj);
 int             ft_cmp_arch64(void *ptr1, void *ptr2);
+int     ft_cmp_arch32(void *ptr1, void *ptr2);
 void            ft_free_datalist(t_data **head);
 int             ft_add_datalist(t_object *ptr_obj, void *ptr_data, int seqnum);
 int     ft_event_destructor(t_object *ptr_obj);
+t_arch ft_event_fat_hendler(t_object *ptr_obj);
 
 
 #endif
