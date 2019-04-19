@@ -36,7 +36,7 @@ int    ft_constructor_mtd(t_object *ptr_obj)
     if (arch == ARMIVE)
     {
         ptr_obj->event.methods.print = NULL; //To do!
-        ptr_obj->event.methods.parser = NULL; //To do!
+        ptr_obj->event.methods.parser = ft_pars_archv;
         ptr_obj->event.methods.sort_cmp = NULL; // to do
     }
     else if (ARCH64 == arch || ARCH32 == arch)

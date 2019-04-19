@@ -32,7 +32,6 @@ unsigned int get_fat_offset(void *ptr)
         if (CPU_TYPE_X86_64 == rewers(arch->cputype))
         {
             offset = rewers(arch->offset);
-            break ;//?
         }
         arch = (struct fat_arch*)((void*)arch + sizeof(arch));
     }
