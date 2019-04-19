@@ -7,8 +7,7 @@ void ft_print_section(void *data)
     if (!data)
         return ;
     ptr = (struct section_64*)data;
-    if (ptr)
-        return;
+    ft_putendl(ptr->sectname);
 }
 
 void    ft_print_arch64(t_object *ptr_obj)

@@ -129,8 +129,9 @@ int     ft_cmp_arch32(void *ptr1, void *ptr2);
 void            ft_free_datalist(t_data **head);
 int             ft_add_datalist(t_object *ptr_obj, void *ptr_data, int seqnum);
 int     ft_event_destructor(t_object *ptr_obj);
-t_arch ft_event_fat_hendler(t_object *ptr_obj);
+t_arch  ft_event_fat_hendler(t_object *ptr_obj);
 int     ft_pars_archv(t_object *ptr_obj);
+void    ft_print_arch64(t_object *ptr_obj);
 
 
 #endif

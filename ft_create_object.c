@@ -58,5 +58,6 @@ void        ft_object_cronstructor(t_object *ptr_obj)
     ptr_obj->init_flag = ft_init_nm_flag;
     ptr_obj->object_process = ft_object_process;
     ptr_obj->event.event_constructor = ft_event_init;
+    ptr_obj->event.event_destructor = ft_event_destructor;
 }
 

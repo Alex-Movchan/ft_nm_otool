@@ -22,7 +22,9 @@ static int     pars_segment_arch64(t_object *ptr_obj, void *load_cmd)
 
 static int ft_pars_symtab(t_object *ptr_obj, void *ptr_data)
 {
-
+    if (ptr_obj->event.methods.new_data(ptr_obj, ptr_data, SYMTAB) == EXIT_FAILURE)
+        return (EXIT_FAILURE);
+    return (EXIT_SUCCESS);
 }
 
 int  ft_parser_arch64(t_object *ptr_obj)
@@ -43,10 +45,10 @@ int  ft_parser_arch64(t_object *ptr_obj)
             if (pars_segment_arch64(ptr_obj, load) == EXIT_FAILURE)
                 return (EXIT_FAILURE);
         }
-        if (load->cmd == LC_SYMTAB)//to do: add filag fir onli 1 checking
+        else if (load->cmd == LC_SYMTAB)//to do: add filag fir onli 1 checking
         {
-//            if (pars_symtab(ptr_obj, (void*)load) == EXIT_FAILURE)
-//                return (EXIT_FAILURE);
+            if (ft_pars_symtab(ptr_obj, (void*)load) == EXIT_FAILURE)
+                return (EXIT_FAILURE);
         }
         load = (void*)load + load->cmdsize;
     }
