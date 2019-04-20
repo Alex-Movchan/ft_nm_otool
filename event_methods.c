@@ -12,12 +12,13 @@ int     ft_event_destructor(t_object *ptr_obj)
     return (EXIT_SUCCESS);
 }
 
-
-int     pars_arch32_mtd(t_object *ptr_obj)
+int    ft_destructor_mtd(t_object *ptr_obj)
 {
     if (!ptr_obj)
         return (EXIT_FAILURE);
-//    if (pars_segment_arch32(ptr_obj) == EXIT_FAILURE)
-//        return (EXIT_FAILURE);
+    ptr_obj->event.methods.print = NULL;
+    ptr_obj->event.methods.parser = NULL;
+    ptr_obj->event.methods.sort_cmp = NULL;
     return (EXIT_SUCCESS);
 }
+

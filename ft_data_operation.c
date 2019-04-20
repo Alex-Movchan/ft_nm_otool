@@ -20,20 +20,6 @@ int     ft_cmp_arch32(void *ptr1, void *ptr2)
     return (ft_strcmp(section1->sectname, section2->sectname));
 }
 
-int     ft_datatype_count(t_data *data, int type)
-{
-    int count;
-
-    count = 0;
-    while (data)
-    {
-        if (data->type == type)
-            count += 1;
-        data = data->next;
-    }
-    return (count);
-}
-
 void    ft_free_datalist(t_data **head)
 {
     t_data  *ptr;

@@ -29,7 +29,7 @@ int     ft_check_flag(int ac, char **av)
     {
         if (av[i][0] == '-')
         {
-            if ((flag = ft_get_flag(flag, av[i])) == EXIT_FAILURE)
+            if ((flag = ft_get_flag(flag, av[i])) == EXIT_FAILURE)// to do remove flags and print error
                 return (EXIT_FAILURE);
         }
     }

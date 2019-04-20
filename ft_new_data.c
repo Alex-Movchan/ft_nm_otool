@@ -16,64 +16,58 @@ static t_data   *ft_create_new_data(void)
 static t_data	*ft_add_data_to_list(t_data **head)
 {
     t_data	*ptr;
+    int     count;
 
+    count = 1;
     ptr = (*head);
     if (ptr)
     {
         while (ptr->next)
+        {
+            count += 1;
             ptr = ptr->next;
-        if ((ptr->next = ft_create_new_data()) != NULL)
-            return (ptr->next);
-        else
+        }
+        if (!(ptr->next = ft_create_new_data()))
             return (NULL);
+        ptr = ptr->next;
     }
     else
     {
-        if (((*head) = ft_create_new_data()) != NULL)
-            return (*head);
-        else
+        if (!(ptr = ft_create_new_data()))
             return (NULL);
-    }
-}
-
-static t_data	*ft_add_data_to_list_rev(t_data **head)
-{
-    t_data	*ptr;
-
-    if ((ptr = ft_create_new_data()) == NULL)
-        return (NULL);
-    ptr->next = (*head);
-    if (*head)
         (*head) = ptr;
-
+    }
+    ptr->seqnum = count;
     return (ptr);
 }
 
-static t_data	*ft_add_data_to_sorted_list(t_data **head, void *ptr_data, int(*cmp)(void*, void*))
+t_data	*ft_add_data_to_sorted_list(t_data **head, void *ptr_data, int(*cmp)(void*, void*))
 {
     t_data  *tmp;
+    t_data  *prev;
     t_data	*ptr;
 
     if ((ptr = ft_create_new_data()) == NULL)
         return (NULL);
+    prev = NULL;
     ptr->ptr_data = ptr_data;
     if (*head)
     {
         tmp = (*head);
-        if (cmp(tmp->ptr_data, ptr->ptr_data) >= 0)
+        while (tmp->next && cmp(ptr->ptr_data, tmp->ptr_data) > 0)
         {
-            ptr->next = tmp;
-            (*head) = ptr;
-            return (ptr);
-        }
-        while (tmp->next && cmp(tmp->ptr_data, ptr->ptr_data) < 0)
+            prev = tmp;
             tmp = tmp->next;
-        if (cmp(tmp->ptr_data, ptr->ptr_data) < 0)
+        }
+        if (!tmp->next && cmp(ptr->ptr_data, tmp->ptr_data) > 0)
             tmp->next = ptr;
         else
         {
-            ptr->next = tmp->next;
-            tmp->next = ptr;
+            if (prev)
+                prev->next = ptr;
+            else
+                (*head) = ptr;
+            ptr->next = tmp;
         }
     }
     else
@@ -87,9 +81,7 @@ t_data             *ft_add_datalist(t_object *ptr_obj, void *ptr_data, int type)
 
     if (!ptr_obj || !ptr_data)
         return (NULL);
-    if (CHECK_BIT(ptr_obj->flag, FLAG_R))
-        ptr = ft_add_data_to_list_rev(&(ptr_obj->event.data));
-    else if (CHECK_BIT(ptr_obj->flag, FLAG_P))
+    if (CHECK_BIT(ptr_obj->flag, FLAG_SECTIONS))
         ptr = ft_add_data_to_list(&(ptr_obj->event.data));
     else
         ptr = ft_add_data_to_sorted_list(&(ptr_obj->event.data), ptr_data, ptr_obj->event.methods.sort_cmp);
@@ -97,5 +89,7 @@ t_data             *ft_add_datalist(t_object *ptr_obj, void *ptr_data, int type)
         return (NULL);
     ptr->ptr_data = ptr_data;
     ptr->type = type;
+    ptr->data_flag = 0;
+    ptr->addr = 0;
     return (ptr);
 }
