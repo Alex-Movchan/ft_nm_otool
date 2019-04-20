@@ -3,10 +3,11 @@
 #define FT_NM_OTOOL_H
 
 #include "libft/libft.h"
-#include "mach-o/loader.h"
-#include "mach-o/loadet.h"
-#include "mach-o/ranlib.h"
-#include "mach-o/fat.h"
+#include <mach-o/loader.h>
+#include <mach-o/loadet.h>
+#include <mach-o/ranlib.h>
+#include <mach-o/fat.h>
+#include <mach-o/nlist.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -54,6 +55,7 @@ typedef enum	e_arch64_data_type
     UNKNOWN_DATA,
     SECTION,
     SYMTAB,
+    FUNC_NAME
 }				t_arch64;
 
 typedef enum	e_arch
@@ -71,6 +73,7 @@ typedef struct		s_data
 {
 	struct s_data	*next;
 	void			*ptr_data;
+	int 			type;
 	int 			seqnum;
 }					t_data;
 
@@ -81,7 +84,7 @@ typedef struct		s_arch_methods
     t_arch          (*get_event_arch)(struct s_object *);
     int             (*parser)(struct s_object *);
     int             (*sort_cmp)(void*, void*);
-    int (*new_data)(struct s_object *, void *, int);
+    t_data *(*new_data)(struct s_object *, void *ptr_data, int type);
     void            (*print)(struct s_object *);
 }					t_arch_methods;
 
@@ -127,11 +130,13 @@ int             ft_parser_arch64(t_object *ptr_obj);
 int             ft_cmp_arch64(void *ptr1, void *ptr2);
 int     ft_cmp_arch32(void *ptr1, void *ptr2);
 void            ft_free_datalist(t_data **head);
-int             ft_add_datalist(t_object *ptr_obj, void *ptr_data, int seqnum);
+t_data          *ft_add_datalist(t_object *ptr_obj, void *ptr_data, int type);
 int     ft_event_destructor(t_object *ptr_obj);
 t_arch  ft_event_fat_hendler(t_object *ptr_obj);
 int     ft_pars_archv(t_object *ptr_obj);
 void    ft_print_arch64(t_object *ptr_obj);
+int     ft_datatype_count(t_data *data, int type);
+int     ft_get_print_data(t_object *ptr_obj, struct symtab_command *tab);
 
 
 #endif

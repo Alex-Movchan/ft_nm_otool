@@ -1,14 +1,7 @@
 #include "ft_nm_otool.h"
 
-void ft_print_section(void *data)
-{
-    struct section_64   *ptr;
 
-    if (!data)
-        return ;
-    ptr = (struct section_64*)data;
-    ft_putendl(ptr->sectname);
-}
+
 
 void    ft_print_arch64(t_object *ptr_obj)
 {
@@ -21,8 +14,10 @@ void    ft_print_arch64(t_object *ptr_obj)
         return ;
     while (tmp)
     {
-        if (tmp->seqnum == SECTION)
-            ft_print_section(tmp->ptr_data);
+        if (tmp->type == FUNC_NAME)
+        {
+            ft_printf("%c %s\n", tmp->seqnum, tmp->ptr_data);
+        }
         tmp = tmp->next;
     }
 }

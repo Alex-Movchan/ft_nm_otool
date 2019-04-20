@@ -9,6 +9,7 @@ static t_data   *ft_create_new_data(void)
     new_data->next = NULL;
     new_data->ptr_data = NULL;
     new_data->seqnum = 0;
+    new_data->type = 0;
     return (new_data);
 }
 
@@ -44,6 +45,7 @@ static t_data	*ft_add_data_to_list_rev(t_data **head)
     ptr->next = (*head);
     if (*head)
         (*head) = ptr;
+
     return (ptr);
 }
 
@@ -58,35 +60,42 @@ static t_data	*ft_add_data_to_sorted_list(t_data **head, void *ptr_data, int(*cm
     if (*head)
     {
         tmp = (*head);
-        while (tmp->next && cmp(tmp->ptr_data, ptr->ptr_data) > 0)
+        if (cmp(tmp->ptr_data, ptr->ptr_data) >= 0)
+        {
+            ptr->next = tmp;
+            (*head) = ptr;
+            return (ptr);
+        }
+        while (tmp->next && cmp(tmp->ptr_data, ptr->ptr_data) < 0)
             tmp = tmp->next;
-        ptr->next = tmp->next;
-        tmp->next = ptr;
+        if (cmp(tmp->ptr_data, ptr->ptr_data) < 0)
+            tmp->next = ptr;
+        else
+        {
+            ptr->next = tmp->next;
+            tmp->next = ptr;
+        }
     }
     else
         (*head) = ptr;
     return (ptr);
 }
 
-int             ft_add_datalist(t_object *ptr_obj, void *ptr_data, int seqnum)
+t_data             *ft_add_datalist(t_object *ptr_obj, void *ptr_data, int type)
 {
     t_data  *ptr;
 
     if (!ptr_obj || !ptr_data)
-        return (EXIT_FAILURE);
+        return (NULL);
     if (CHECK_BIT(ptr_obj->flag, FLAG_R))
         ptr = ft_add_data_to_list_rev(&(ptr_obj->event.data));
     else if (CHECK_BIT(ptr_obj->flag, FLAG_P))
         ptr = ft_add_data_to_list(&(ptr_obj->event.data));
     else
-    {
-        ptr = ft_add_data_to_sorted_list(&(ptr_obj->event.data),
-             ptr_data, ptr_obj->event.methods.sort_cmp);
-    }
+        ptr = ft_add_data_to_sorted_list(&(ptr_obj->event.data), ptr_data, ptr_obj->event.methods.sort_cmp);
     if (!ptr)
-        return (ptr_obj->event.event_crash(ptr_obj,
-                "Error: create new data_list", NULL, ERROR_EVENT));
+        return (NULL);
     ptr->ptr_data = ptr_data;
-    ptr->seqnum = seqnum;
-    return (EXIT_SUCCESS);
+    ptr->type = type;
+    return (ptr);
 }
