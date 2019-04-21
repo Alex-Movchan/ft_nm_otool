@@ -18,17 +18,16 @@ static t_data	*ft_add_data_to_list(t_data **head)
     t_data	*ptr;
     int     count;
 
-    count = 1;
     ptr = (*head);
     if (ptr)
     {
         while (ptr->next)
         {
-            count += 1;
             ptr = ptr->next;
         }
         if (!(ptr->next = ft_create_new_data()))
             return (NULL);
+        ptr->next->seqnum = ptr->seqnum + 1;
         ptr = ptr->next;
     }
     else
@@ -36,8 +35,8 @@ static t_data	*ft_add_data_to_list(t_data **head)
         if (!(ptr = ft_create_new_data()))
             return (NULL);
         (*head) = ptr;
+        ptr->seqnum = 1;
     }
-    ptr->seqnum = count;
     return (ptr);
 }
 
@@ -54,7 +53,7 @@ t_data	*ft_add_data_to_sorted_list(t_data **head, void *ptr_data, int(*cmp)(void
     if (*head)
     {
         tmp = (*head);
-        while (tmp->next && cmp(ptr->ptr_data, tmp->ptr_data) > 0)
+        while (tmp->next && cmp(ptr->ptr_data, tmp->ptr_data) >= 0)
         {
             prev = tmp;
             tmp = tmp->next;

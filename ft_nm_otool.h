@@ -27,7 +27,7 @@
 #define HEX 16
 #ifndef FT_OTOOL
 #ifndef FT_NM
-#define PROGRAM_STATE 0
+#define PROGRAM_STATE 2
 #else
 #define PROGRAM_STATE 2
 #endif
@@ -142,5 +142,7 @@ void    ft_print_arch64(t_object *ptr_obj);
 int  ft_parser_arch32(t_object *ptr_obj);
 void    ft_print_arch32(t_object *ptr_obj);
 void    ft_print_otool_arch64(t_object *ptr_obj);
+uint8_t ft_get_func_type64(t_data *ptr_data, uint8_t type, uint8_t n_sect);
+void ft_print_archv(t_object *ptr_obj);
 
 #endif

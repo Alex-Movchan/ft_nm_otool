@@ -30,6 +30,13 @@ static int ft_object_process(t_object *ptr_obj, int ac, char **av)
             ptr_obj->event.error_lvl = SUCCESS;
         }
     }
+    if (1 == i)
+    {
+        ptr_obj->event.file_name = "a.out";
+        if (ptr_obj->event.ft_event_hendler((void*)ptr_obj) == EXIT_FAILURE)
+            return (EXIT_FAILURE);
+
+    }
     return (EXIT_SUCCESS);
 }
 

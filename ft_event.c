@@ -74,8 +74,8 @@ static int ft_object_event_hendler(t_object *ptr_obj)
         		ptr_obj->event.file_name, SYSTEM_ERROR));
     if ((res = ptr_obj->event.methods.constructor_mtd(ptr_obj)) == EXIT_FAILURE)
     {
-        return (ptr_obj->event.event_crash(ptr_obj,
-             "Error: unknown architecture:", ptr_obj->event.file_name, ERROR_EVENT));
+        return ( ptr_obj->event.error_lvl == SUCCESS ? ptr_obj->event.event_crash(ptr_obj,
+             "Error: unknown architecture:", ptr_obj->event.file_name, ERROR_EVENT) : EXIT_FAILURE);
     }
     if (ptr_obj->event.methods.parser(ptr_obj) == EXIT_FAILURE)
         return (ptr_obj->event.event_crash(ptr_obj,

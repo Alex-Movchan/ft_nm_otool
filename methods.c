@@ -1,12 +1,13 @@
 #include "ft_nm_otool.h"
 
+
+
 static void ft_create_method_for_archv(t_object *ptr_obj)
 {
     if (PROGRAM_STATE == NM_PROGRAM)
     {
-        ptr_obj->event.methods.print = NULL; //To do!
+        ptr_obj->event.methods.print = ft_print_archv; //To do!
         ptr_obj->event.methods.parser = ft_pars_archv;
-        ptr_obj->event.methods.sort_cmp = NULL; // to do
     }
     else if (PROGRAM_STATE == OTOOL_PROGRAM)
     {

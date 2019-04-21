@@ -16,7 +16,7 @@ unsigned int get_fat_offset(void *ptr)
 {
     struct fat_header	*fat_headr;
     struct fat_arch		*arch;
-    int					i;
+    unsigned int cputype;
     int					count;
     uint32_t			offset;
 
@@ -24,16 +24,14 @@ unsigned int get_fat_offset(void *ptr)
         return (EXIT_FAILURE);
     offset = 0;
     fat_headr = (struct fat_header*)ptr;
-    arch = (struct fat_arch*)(ptr + sizeof(fat_headr));
+    arch = ptr + sizeof(struct fat_header);
     count = rewers(fat_headr->nfat_arch);
-    i = -1;
-    while (++i < count)
+    while (--count >= 0)
     {
-        if (CPU_TYPE_X86_64 == rewers(arch->cputype))
-        {
+        cputype = rewers(arch->cputype);
+        if (CPU_TYPE_X86_64 & cputype)
             offset = rewers(arch->offset);
-        }
-        arch = (struct fat_arch*)((void*)arch + sizeof(arch));
+        arch = (void*)arch + sizeof(*arch);
     }
     return (offset);
 }
@@ -44,8 +42,7 @@ int ft_event_fat_hendler(t_object *ptr_obj)
 
     if (!ptr_obj)
         return (EXIT_FAILURE);
-    if ((offset = get_fat_offset(ptr_obj->event.data_buff)) == 0)
-        return (EXIT_FAILURE);
+    offset = get_fat_offset(ptr_obj->event.data_buff);
     ptr_obj->event.offset += offset;
     ptr_obj->event.data_buff = ptr_obj->event.data_buff + offset;
     return (EXIT_SUCCESS);

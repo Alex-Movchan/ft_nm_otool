@@ -1,5 +1,29 @@
 #include "ft_nm_otool.h"
 
+void	ft_puthexaddr(unsigned char hex)
+{
+    if (0 == hex / HEX)
+        ft_putchar(HEX_BASE[hex % HEX]);
+    else
+    {
+        ft_puthexaddr(hex / (unsigned char) HEX);
+        ft_putchar(HEX_BASE[hex % HEX]);
+    }
+}
+
+static int	ft_print_hex(unsigned char *str, size_t size)
+{
+    int		i;
+
+    i = -1;
+    while (++i < HEX && i < (int)size)
+    {
+        ft_puthexaddr(str[i]);
+        ft_putchar(' ');
+    }
+    ft_putstr("\r\n");
+    return (i);
+}
 
 void    ft_print_arch32(t_object *ptr_obj)
 {
@@ -43,31 +67,6 @@ void    ft_print_arch64(t_object *ptr_obj)
         }
         tmp = tmp->next;
     }
-}
-
-void	ft_puthexaddr(unsigned char hex)
-{
-    if (0 == hex / HEX)
-        ft_putchar(HEX_BASE[hex % HEX]);
-    else
-    {
-        ft_puthexaddr(hex / (unsigned char) HEX);
-        ft_putchar(HEX_BASE[hex % HEX]);
-    }
-}
-
-static int	ft_print_hex(unsigned char *str, size_t size)
-{
-    int		i;
-
-    i = -1;
-    while (++i < HEX && i < (int)size)
-    {
-        ft_puthexaddr(str[i]);
-        ft_putchar(' ');
-    }
-    ft_putstr("\r\n");
-    return (i);
 }
 
 void    ft_print_otool_arch64(t_object *ptr_obj)
