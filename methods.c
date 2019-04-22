@@ -61,9 +61,10 @@ int    ft_constructor_mtd(t_object *ptr_obj)
     magic = *(unsigned int *)ptr_obj->event.data_buff;
     if (magic == FAT_MAGIC || magic == FAT_CIGAM)
     {
-        if (ptr_obj->event.cllback_fat(ptr_obj) == EXIT_FAILURE)
+        if (ptr_obj->event.cllback_fat(ptr_obj) == EXIT_FAILURE && ptr_obj->event.error_lvl == SUCCESS)
             return (ptr_obj->event.event_crash(ptr_obj, "Error parsing fat", NULL, ERROR_EVENT));
-        magic = *(unsigned int *)ptr_obj->event.data_buff;
+        else
+            return (EXIT_FAILURE);
     }
     if (magic == MH_MAGIC_64)
         ft_create_method_for_arch64(ptr_obj);

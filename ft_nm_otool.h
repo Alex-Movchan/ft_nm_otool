@@ -17,14 +17,15 @@
 #define CHECK_BIT(a, n) ((a) & (1 << n))
 #define ARCH_64_SHOW_ADDR 2
 #define BYTE 8
-# define HEX_BASE "0123456789abcdef"
-#define FLAG_J  1
-#define FLAG_U  2
-#define FLAG_UP_U  3
-#define FLAG_P  4
-#define FLAG_R  5
+
+
+#define ARCH_64 2
+#define ARCH_32 1
+
+#define GET_ARCH() (sizeof(void*) == 8 ? ARCH_64 : ARCH_32)
 #define FLAG_SECTIONS 6
 #define HEX 16
+# define HEX_BASE "0123456789abcdef"
 #ifndef FT_OTOOL
 #ifndef FT_NM
 #define PROGRAM_STATE 2
@@ -117,7 +118,6 @@ typedef struct      s_object
     void            (*object_cronstructor)(struct s_object *);
     int             (*object_destructor)(struct s_object *);
     int			    (*object_crash_destructor)(struct s_object *, char *, char *);
-    int			    (*init_flag)(struct s_object *, int, char **);
     int			    (*object_process)(struct s_object *, int, char **);
     t_event         event;
     int    			flag;
@@ -126,7 +126,6 @@ typedef struct      s_object
 
 void            ft_event_init(t_object *ptr_obj);
 int         	ft_error(char *msg, char *param);
-int         	ft_check_flag(int ac, char **av);
 void            ft_object_cronstructor(t_object *ptr_obj);
 int             ft_destructor_mtd(t_object *ptr_obj);
 int             ft_constructor_mtd(t_object *ptr_obj);
@@ -144,5 +143,8 @@ void    ft_print_arch32(t_object *ptr_obj);
 void    ft_print_otool_arch64(t_object *ptr_obj);
 uint8_t ft_get_func_type64(t_data *ptr_data, uint8_t type, uint8_t n_sect);
 void ft_print_archv(t_object *ptr_obj);
+int     get_archv_arch64(t_object *ptr_obj, void *ptr);
+int     get_archv_arch32(t_object *ptr_obj, void *ptr);
+int ft_object_event_hendler(t_object *ptr_obj);
 
 #endif

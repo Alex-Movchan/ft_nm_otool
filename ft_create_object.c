@@ -1,15 +1,5 @@
 #include "ft_nm_otool.h"
 
-static int ft_init_nm_flag(t_object *ptr_obj, int ac, char **av)
-{
-    if (!ptr_obj)
-        return (EXIT_FAILURE);
-    if ((ptr_obj->flag = ft_check_flag(ac, av)) == EXIT_FAILURE)
-        return (EXIT_FAILURE);
-    return (EXIT_SUCCESS);
-}
-
-
 static int ft_object_process(t_object *ptr_obj, int ac, char **av)
 {
     int     i;
@@ -62,7 +52,6 @@ void        ft_object_cronstructor(t_object *ptr_obj)
 {
     ptr_obj->object_destructor = ft_object_destructor;
     ptr_obj->object_crash_destructor = ft_object_crash;
-    ptr_obj->init_flag = ft_init_nm_flag;
     ptr_obj->object_process = ft_object_process;
     ptr_obj->event.event_constructor = ft_event_init;
     ptr_obj->event.event_destructor = ft_event_destructor;
