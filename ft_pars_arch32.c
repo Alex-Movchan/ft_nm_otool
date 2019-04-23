@@ -1,22 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_pars_arch32.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/24 01:35:00 by amovchan          #+#    #+#             */
+/*   Updated: 2019/04/24 01:36:12 by amovchan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_nm_otool.h"
 
-static int     pars_segment_arch32(t_object *ptr_obj, void *load_cmd)
+static int	pars_segment_arch32(t_object *ptr_obj, void *load_cmd)
 {
     struct segment_command	*segment;
     struct section			*section;
-    int                         idx;
-    int                         count;
+    int						idx;
+    int						count;
 
-    idx = -1;
-    segment = (struct segment_command *)load_cmd;
-    count = segment->nsects;
-    section = (void *)segment + sizeof(*segment);
-    SET_BIT(ptr_obj->flag, FLAG_SECTIONS);
-    while (++idx < count)
-    {
-        if (PROGRAM_STATE == NM_PROGRAM)
+	idx = -1;
+	segment = (struct segment_command *)load_cmd;
+	count = segment->nsects;
+	section = (void *)segment + sizeof(*segment);
+	SET_BIT(ptr_obj->flag, FLAG_SECTIONS);
+	while (++idx < count)
+	{
+		if (PROGRAM_STATE == NM_PROGRAM)
         {
-            if (!(ptr_obj->event.methods.new_data(ptr_obj, section, SECTION)))
+			if (!(ptr_obj->event.methods.new_data(ptr_obj, section, SECTION)))
                 return (ptr_obj->event.event_crash(ptr_obj,
                         "Error: create new data_list", NULL, ERROR_EVENT));
         }
@@ -53,7 +65,7 @@ static uint8_t ft_get_section_type32(t_data *ptr_data, uint8_t n_sect)
                     return ('d');
                 if (!ft_strcmp(tmp->sectname, SECT_BSS))
                     return ('b');
-                if (!ft_strcmp(tmp->sectname, SECT_TEXT)) //?? || !ft_strcmp(tmp->sectname, SEG_TEXT))
+                if (!ft_strcmp(tmp->sectname, SECT_TEXT))
                     return ('t');
                 else
                     return ('s');

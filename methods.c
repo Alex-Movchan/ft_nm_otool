@@ -4,47 +4,34 @@
 
 static void ft_create_method_for_archv(t_object *ptr_obj)
 {
-    if (PROGRAM_STATE == NM_PROGRAM)
-    {
-        ptr_obj->event.methods.print = ft_print_archv; //To do!
-        ptr_obj->event.methods.parser = ft_pars_archv;
-    }
-    else if (PROGRAM_STATE == OTOOL_PROGRAM)
-    {
-        ptr_obj->event.methods.print = NULL; // to do
-        ptr_obj->event.methods.parser = NULL; //to do
-        ptr_obj->event.methods.sort_cmp = NULL; // to do
-    }
+    ptr_obj->event.methods.print = ft_print_archv;
+    ptr_obj->event.methods.parser = ft_pars_archv;
+    if (PROGRAM_STATE == OTOOL_PROGRAM)
+        ft_printf("Archive : %s\n", ptr_obj->event.file_name);
 }
 
 static void ft_create_method_for_arch32(t_object *ptr_obj)
 {
+    ptr_obj->event.methods.parser = ft_parser_arch32;
+    ptr_obj->event.methods.sort_cmp = ft_cmp_arch32;
     if (PROGRAM_STATE == NM_PROGRAM)
-    {
         ptr_obj->event.methods.print = ft_print_arch32;
-        ptr_obj->event.methods.parser = ft_parser_arch32;
-        ptr_obj->event.methods.sort_cmp = ft_cmp_arch32;
-    }
-    else if (PROGRAM_STATE == OTOOL_PROGRAM)
+    if (PROGRAM_STATE == OTOOL_PROGRAM)
     {
-        ptr_obj->event.methods.print = NULL; // to do
-        ptr_obj->event.methods.parser = NULL; //to do
-        ptr_obj->event.methods.sort_cmp = NULL; // to do
+        ptr_obj->event.methods.print = ft_print_arch32_hex;
+        ft_printf("%s:\n", ptr_obj->event.file_name);
     }
 }
 static void ft_create_method_for_arch64(t_object *ptr_obj)
 {
+    ptr_obj->event.methods.parser = ft_parser_arch64;
+    ptr_obj->event.methods.sort_cmp = ft_cmp_arch64;
     if (PROGRAM_STATE == NM_PROGRAM)
-    {
         ptr_obj->event.methods.print = ft_print_arch64;
-        ptr_obj->event.methods.parser = ft_parser_arch64;
-        ptr_obj->event.methods.sort_cmp = ft_cmp_arch64;
-    }
-    else if (PROGRAM_STATE == OTOOL_PROGRAM)
+    if (PROGRAM_STATE == OTOOL_PROGRAM)
     {
-        ptr_obj->event.methods.print = ft_print_otool_arch64;
-        ptr_obj->event.methods.parser = ft_parser_arch64;
-        ptr_obj->event.methods.sort_cmp = NULL;
+        ptr_obj->event.methods.print = ft_print_arch64_hex;
+        ft_printf("%s:\n", ptr_obj->event.file_name);
     }
 
 }
@@ -56,12 +43,12 @@ int    ft_constructor_mtd(t_object *ptr_obj)
 
     if (!ptr_obj)
         return (EXIT_FAILURE);
-    ptr_obj->event.offset = 0;
     ptr_obj->event.methods.new_data = ft_add_datalist;
     magic = *(unsigned int *)ptr_obj->event.data_buff;
     if (magic == FAT_MAGIC || magic == FAT_CIGAM)
     {
-        if (ptr_obj->event.cllback_fat(ptr_obj) == EXIT_FAILURE && ptr_obj->event.error_lvl == SUCCESS)
+        if (ptr_obj->event.cllback_fat(ptr_obj) == EXIT_FAILURE &&
+        ptr_obj->event.error_lvl == SUCCESS)
             return (ptr_obj->event.event_crash(ptr_obj, "Error parsing fat", NULL, ERROR_EVENT));
         else
             return (EXIT_FAILURE);

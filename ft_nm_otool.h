@@ -1,37 +1,44 @@
 
 #ifndef FT_NM_OTOOL_H
-#define FT_NM_OTOOL_H
+# define FT_NM_OTOOL_H
 
-#include "libft/libft.h"
-#include <mach-o/loader.h>
-#include <mach-o/ranlib.h>
-#include <mach-o/fat.h>
-#include <mach-o/nlist.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <ar.h>
+# include "libft/libft.h"
+# include <mach-o/loader.h>
+# include <mach-o/ranlib.h>
+# include <mach-o/fat.h>
+# include <mach-o/nlist.h>
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <sys/mman.h>
+# include <ar.h>
 
-#define SET_BIT(a, n) ((a) |= (1 << n))
-#define RESET_BIT(a, n) ((a) &= ~(1 << n))
-#define CHECK_BIT(a, n) ((a) & (1 << n))
-#define ARCH_64_SHOW_ADDR 2
-#define BYTE 8
+//# define FT_OTOOL
+//# define FT_NM
 
-
-#define ARCH_64 2
-#define ARCH_32 1
-
-#define GET_ARCH() (sizeof(void*) == 8 ? ARCH_64 : ARCH_32)
-#define FLAG_SECTIONS 6
-#define HEX 16
+# define SET_BIT(a, n) ((a) |= (1 << n))
+# define RESET_BIT(a, n) ((a) &= ~(1 << n))
+# define CHECK_BIT(a, n) ((a) & (1 << n))
+# define ARCH_64_SHOW_ADDR 2
+# define BYTE 8
+# define ARCH_64 16
+# define ARCH_32 8
+# define GET_ARCH() (sizeof(void*) == 8 ? ARCH_64 : ARCH_32)
+# define FLAG_SECTIONS 6
+# define HEX 16
 # define HEX_BASE "0123456789abcdef"
-#ifndef FT_OTOOL
-#ifndef FT_NM
-#define PROGRAM_STATE 2
-#else
-#define PROGRAM_STATE 2
-#endif
+# define ERR_VALID_MS "The file was not recognized as a valid object file"
+# define ERR_BIN "Error: is not binary file"
+
+# ifndef FT_OTOOL
+# ifndef FT_NM
+
+# define PROGRAM_STATE 1
+# else
+
+# define PROGRAM_STATE 2
+
+# endif
+
 #else
 #define PROGRAM_STATE 1
 #endif
@@ -42,7 +49,6 @@ typedef enum	e_crash_lvl
     ERROR_EVENT,
     WORNING,
     SYSTEM_ERROR,
-    NULL_PTR,
     CRITICAL
 
 }               t_crash_lvl;
@@ -58,21 +64,10 @@ typedef enum	e_arch64_data_type
 {
     UNKNOWN_DATA,
     SECTION,
-    SYMTAB,
     FUNC_NAME
 }				t_arch64;
 
-typedef enum	e_arch
-{
-    UNKNOWN,
-	FAT,
-	ARCH32,
-	ARCH64,
-	ARMIVE
-}				t_arch;
-
 struct				s_object;
-
 
 typedef struct		s_data
 {
@@ -102,14 +97,13 @@ typedef struct		s_event
 	int				(*ft_event_hendler)(struct s_object *);
 	int				(*event_hendler_destructor)(struct s_object *);
 	int				(*event_crash)(struct s_object *, char *, char *, t_crash_lvl );
-    int			(*cllback_fat)(struct s_object *);
+    int			 (*cllback_fat)(struct s_object *);
 	void            (*free_data)(t_data **);
 	char			*file_name;
 	void			*data_buff;
 	t_data			*data;
     t_arch_methods  methods;
 	struct stat		spcf;
-	unsigned int    offset;
     t_crash_lvl     error_lvl;
 }					t_event;
 
@@ -124,27 +118,32 @@ typedef struct      s_object
 }				    t_object;
 
 
-void            ft_event_init(t_object *ptr_obj);
-int         	ft_error(char *msg, char *param);
-void            ft_object_cronstructor(t_object *ptr_obj);
-int             ft_destructor_mtd(t_object *ptr_obj);
-int             ft_constructor_mtd(t_object *ptr_obj);
-int             ft_parser_arch64(t_object *ptr_obj);
-int             ft_cmp_arch64(void *ptr1, void *ptr2);
-int     ft_cmp_arch32(void *ptr1, void *ptr2);
-void            ft_free_datalist(t_data **head);
-t_data          *ft_add_datalist(t_object *ptr_obj, void *ptr_data, int type);
-int     ft_event_destructor(t_object *ptr_obj);
+void ft_event_init(t_object *ptr_obj);
+int ft_error(char *msg, char *param);
+void ft_object_cronstructor(t_object *ptr_obj);
+int ft_destructor_mtd(t_object *ptr_obj);
+int ft_constructor_mtd(t_object *ptr_obj);
+int ft_parser_arch64(t_object *ptr_obj);
+int ft_cmp_arch64(void *ptr1, void *ptr2);
+int ft_cmp_arch32(void *ptr1, void *ptr2);
+void ft_free_datalist(t_data **head);
+t_data *ft_add_datalist(t_object *ptr_obj, void *ptr_data, int type);
+int ft_event_destructor(t_object *ptr_obj);
 int  ft_event_fat_hendler(t_object *ptr_obj);
-int     ft_pars_archv(t_object *ptr_obj);
-void    ft_print_arch64(t_object *ptr_obj);
+int ft_pars_archv(t_object *ptr_obj);
+void ft_print_arch64(t_object *ptr_obj);
 int  ft_parser_arch32(t_object *ptr_obj);
-void    ft_print_arch32(t_object *ptr_obj);
-void    ft_print_otool_arch64(t_object *ptr_obj);
+void ft_print_arch32(t_object *ptr_obj);
 uint8_t ft_get_func_type64(t_data *ptr_data, uint8_t type, uint8_t n_sect);
 void ft_print_archv(t_object *ptr_obj);
-int     get_archv_arch64(t_object *ptr_obj, void *ptr);
-int     get_archv_arch32(t_object *ptr_obj, void *ptr);
+int get_archv_arch64(t_object *ptr_obj, void *ptr);
+int get_archv_arch32(t_object *ptr_obj, void *ptr);
 int ft_object_event_hendler(t_object *ptr_obj);
+void ft_puthexaddr(unsigned long long int hex);
+void ft_puthex_byt(unsigned char hex);
+void ft_print_arch64_hex(t_object *ptr_obj);
+void ft_print_arch32_hex(t_object *ptr_obj);
+int ft_print_hex(unsigned char *str, size_t size);
+
 
 #endif

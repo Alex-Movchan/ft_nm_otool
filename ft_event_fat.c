@@ -1,52 +1,67 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_event_fat.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/24 00:33:39 by amovchan          #+#    #+#             */
+/*   Updated: 2019/04/24 00:37:36 by amovchan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_nm_otool.h"
 
-static unsigned int		rewers(int nb)
+static unsigned int	rewers(int nb)
 {
-    unsigned int res;
+	unsigned int	res;
 
-    res = 0;
-    res |= ((nb & 0xFF) << (3 * BYTE));
-    res |= ((nb & 0xFF00) << BYTE);
-    res |= ((nb & 0xFF0000) >> BYTE);
-    res |= ((nb & 0xFF000000) >> (3 * BYTE));
-    return (res);
+	res = 0;
+	res |= ((nb & 0xFF) << (3 * BYTE));
+	res |= ((nb & 0xFF00) << BYTE);
+	res |= ((nb & 0xFF0000) >> BYTE);
+	res |= ((nb & 0xFF000000) >> (3 * BYTE));
+	return (res);
 }
 
-static unsigned int get_fat_offset(void *ptr, int count)
+static unsigned int	get_fat_offset(void *ptr, int count)
 {
-    struct fat_header	*fat_headr;
-    struct fat_arch		*arch;
+	struct fat_header	*fat_headr;
+	struct fat_arch		*arch;
 
-    if (!ptr)
-        return (EXIT_FAILURE);
-    fat_headr = (struct fat_header*)ptr;
-    arch = ptr + sizeof(struct fat_header) + sizeof(struct fat_arch) * count;
-    return (fat_headr->magic == FAT_CIGAM ?  rewers(arch->offset) : arch->offset);
+	if (!ptr)
+		return (EXIT_FAILURE);
+	fat_headr = (struct fat_header*)ptr;
+	arch = ptr + sizeof(struct fat_header) + sizeof(struct fat_arch) * count;
+	return (fat_headr->magic == FAT_CIGAM ?
+			rewers(arch->offset) : arch->offset);
 }
 
-int ft_event_fat_hendler(t_object *ptr_obj)
+int					ft_event_fat_hendler(t_object *ptr_obj)
 {
-    struct fat_header *fat_headr;
-    unsigned int offset;
-    unsigned int magic;
+	struct fat_header	*fat_headr;
+	unsigned int		offset;
+	unsigned int		magic;
+	int					count;
+	int					i;
 
-    int	count;
-    int i;
-
-    if (!ptr_obj)
-        return (EXIT_FAILURE);
-    fat_headr = (struct fat_header*)ptr_obj->event.data_buff;
-    count =  fat_headr->magic == FAT_CIGAM ? rewers(fat_headr->nfat_arch) : fat_headr->nfat_arch;
-    i = -1;
-    while (++i < count)
-    {
-        offset = get_fat_offset(ptr_obj->event.data_buff, i);
-        magic = *(unsigned int*)(ptr_obj->event.data_buff + offset);
-        if (MH_MAGIC == magic && GET_ARCH() == ARCH_32)
-            get_archv_arch32(ptr_obj, ptr_obj->event.data_buff + offset);
-        else if (MH_MAGIC_64 == magic && GET_ARCH() == ARCH_64)
-            get_archv_arch64(ptr_obj, ptr_obj->event.data_buff + offset);
-    }
-    ptr_obj->event.error_lvl = ERROR_EVENT;
-    return (EXIT_SUCCESS);
+	if (!ptr_obj)
+		return (EXIT_FAILURE);
+	if (PROGRAM_STATE == OTOOL_PROGRAM)
+		ft_printf("%s:\n", ptr_obj->event.file_name);
+	fat_headr = (struct fat_header*)ptr_obj->event.data_buff;
+	count = fat_headr->magic == FAT_CIGAM ?
+		rewers(fat_headr->nfat_arch) : fat_headr->nfat_arch;
+	i = -1;
+	while (++i < count)
+	{
+		offset = get_fat_offset(ptr_obj->event.data_buff, i);
+		magic = *(unsigned int*)(ptr_obj->event.data_buff + offset);
+		if (MH_MAGIC == magic && GET_ARCH() == ARCH_32)
+			get_archv_arch32(ptr_obj, ptr_obj->event.data_buff + offset);
+		else if (MH_MAGIC_64 == magic && GET_ARCH() == ARCH_64)
+			get_archv_arch64(ptr_obj, ptr_obj->event.data_buff + offset);
+	}
+	ptr_obj->event.error_lvl = ERROR_EVENT;
+	return (EXIT_SUCCESS);
 }

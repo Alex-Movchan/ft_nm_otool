@@ -15,7 +15,10 @@ int     get_archv_arch64(t_object *ptr_obj, void *ptr)
         ptr_obj->event.data_buff = tmp;
         return (EXIT_FAILURE);
     }
-    ft_print_arch64(ptr_obj);
+    if (PROGRAM_STATE == NM_PROGRAM)
+        ft_print_arch64(ptr_obj);
+    else if (PROGRAM_STATE == OTOOL_PROGRAM)
+        ft_print_arch64_hex(ptr_obj);
     ptr_obj->event.data_buff = tmp;
     ft_free_datalist(&(ptr_obj->event.data));
     return (EXIT_SUCCESS);
@@ -35,7 +38,10 @@ int     get_archv_arch32(t_object *ptr_obj, void *ptr)
         ptr_obj->event.data_buff = tmp;
         return (EXIT_FAILURE);
     }
-    ft_print_arch32(ptr_obj);
+    if (PROGRAM_STATE == NM_PROGRAM)
+        ft_print_arch32(ptr_obj);
+    else if (PROGRAM_STATE == OTOOL_PROGRAM)
+        ft_print_arch32_hex(ptr_obj);
     ptr_obj->event.data_buff = tmp;
     ft_free_datalist(&(ptr_obj->event.data));
     return (EXIT_SUCCESS);
@@ -64,8 +70,10 @@ int     ft_name_offset(t_object *ptr_obj, struct ar_hdr *hdr)
         name = hdr->ar_name;
     if (ft_strcmp(SYMDEF_SORTED, name))
     {
-
-       ft_printf("\n%s(%s):\n", ptr_obj->event.file_name, name);
+        if (PROGRAM_STATE == OTOOL_PROGRAM)
+            ft_printf("%s(%s):\n", ptr_obj->event.file_name, name);
+        else
+            ft_printf("\n%s(%s):\n", ptr_obj->event.file_name, name);
     }
     return (offset);
 }
