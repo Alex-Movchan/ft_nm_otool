@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_nm_otool.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/24 21:05:30 by amovchan          #+#    #+#             */
+/*   Updated: 2019/04/25 00:10:30 by amovchan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef FT_NM_OTOOL_H
 # define FT_NM_OTOOL_H
@@ -12,9 +23,6 @@
 # include <sys/mman.h>
 # include <ar.h>
 
-//# define FT_OTOOL
-//# define FT_NM
-
 # define SET_BIT(a, n) ((a) |= (1 << n))
 # define RESET_BIT(a, n) ((a) &= ~(1 << n))
 # define CHECK_BIT(a, n) ((a) & (1 << n))
@@ -28,122 +36,122 @@
 # define HEX_BASE "0123456789abcdef"
 # define ERR_VALID_MS "The file was not recognized as a valid object file"
 # define ERR_BIN "Error: is not binary file"
-
 # ifndef FT_OTOOL
-# ifndef FT_NM
-
-# define PROGRAM_STATE 1
+#  ifndef FT_NM
+#   define PROGRAM_STATE 1
+#  else
+#   define PROGRAM_STATE 2
+#  endif
 # else
-
-# define PROGRAM_STATE 2
-
+#  define PROGRAM_STATE 1
 # endif
 
-#else
-#define PROGRAM_STATE 1
-#endif
-
-typedef enum	e_crash_lvl
+typedef enum				e_crash_lvl
 {
-    SUCCESS,
-    ERROR_EVENT,
-    WORNING,
-    SYSTEM_ERROR,
-    CRITICAL
+	SUCCESS,
+	ERROR_EVENT,
+	WORNING,
+	SYSTEM_ERROR,
+	CRITICAL
+}							t_crash_lvl;
 
-}               t_crash_lvl;
-
-typedef enum	e_program_state
+typedef enum				e_program_state
 {
-    UNKNOWN_PROGRAM,
-    OTOOL_PROGRAM,
-    NM_PROGRAM
-}               t_ptogram_state;
+	UNKNOWN_PROGRAM,
+	OTOOL_PROGRAM,
+	NM_PROGRAM
+}							t_ptogram_state;
 
-typedef enum	e_arch64_data_type
+typedef enum				e_arch64_data_type
 {
-    UNKNOWN_DATA,
-    SECTION,
-    FUNC_NAME
-}				t_arch64;
+	UNKNOWN_DATA,
+	SECTION,
+	FUNC_NAME
+}							t_arch64;
 
-struct				s_object;
+struct s_object;
 
-typedef struct		s_data
+typedef struct				s_data
 {
-	struct s_data	*next;
-	void			*ptr_data;
-	unsigned long	addr;
-	char			data_flag;
-	int 			type;
-	int 			seqnum;
-}					t_data;
+	struct s_data			*next;
+	void					*ptr_data;
+	unsigned long			addr;
+	char					data_flag;
+	int						type;
+	int						seqnum;
+}							t_data;
 
-typedef struct		s_arch_methods
+typedef struct				s_arch_methods
 {
-	int             (*constructor_mtd)(struct s_object *);
-    int             (*destructor_mtd)(struct s_object *);
-    int             (*parser)(struct s_object *);
-    int             (*sort_cmp)(void*, void*);
-    t_data *(*new_data)(struct s_object *, void *ptr_data, int type);
-    void            (*print)(struct s_object *);
-}					t_arch_methods;
+	int						(*constructor_mtd)(struct s_object *);
+	int						(*destructor_mtd)(struct s_object *);
+	int						(*parser)(struct s_object *);
+	int						(*sort_cmp)(void*, void*);
+	t_data					*(*new_data)(struct s_object *,
+								void *ptr_data, int type);
+	void					(*print)(struct s_object *);
+}							t_arch_methods;
 
-typedef struct		s_event
+typedef struct				s_event
 {
-	void			(*event_constructor)(struct s_object *);
-	int				(*event_destructor)(struct s_object *);
-	int				(*event_validetion)(struct s_object *);
-	int				(*ft_event_hendler)(struct s_object *);
-	int				(*event_hendler_destructor)(struct s_object *);
-	int				(*event_crash)(struct s_object *, char *, char *, t_crash_lvl );
-    int			 (*cllback_fat)(struct s_object *);
-	void            (*free_data)(t_data **);
-	char			*file_name;
-	void			*data_buff;
-	t_data			*data;
-    t_arch_methods  methods;
-	struct stat		spcf;
-    t_crash_lvl     error_lvl;
-}					t_event;
+	void					(*event_constructor)(struct s_object *);
+	int						(*event_destructor)(struct s_object *);
+	int						(*event_validetion)(struct s_object *);
+	int						(*ft_event_hendler)(struct s_object *);
+	int						(*event_hendler_destructor)(struct s_object *);
+	int						(*event_crash)(struct s_object *,
+										char *, char *, t_crash_lvl);
+	int						(*cllback_fat)(struct s_object *);
+	void					(*free_data)(t_data **);
+	char					*file_name;
+	void					*data_buff;
+	t_data					*data;
+	t_arch_methods			methods;
+	struct stat				spcf;
+	t_crash_lvl				error_lvl;
+}							t_event;
 
-typedef struct      s_object
+typedef struct				s_object
 {
-    void            (*object_cronstructor)(struct s_object *);
-    int             (*object_destructor)(struct s_object *);
-    int			    (*object_crash_destructor)(struct s_object *, char *, char *);
-    int			    (*object_process)(struct s_object *, int, char **);
-    t_event         event;
-    int    			flag;
-}				    t_object;
+	void					(*object_cronstructor)(struct s_object *);
+	int						(*object_destructor)(struct s_object *);
+	int						(*object_crash_destructor)(struct s_object *,
+									char *, char *);
+	int						(*object_process)(struct s_object *, int, char **);
+	t_event					event;
+	int						flag;
+}							t_object;
 
-
-void ft_event_init(t_object *ptr_obj);
-int ft_error(char *msg, char *param);
-void ft_object_cronstructor(t_object *ptr_obj);
-int ft_destructor_mtd(t_object *ptr_obj);
-int ft_constructor_mtd(t_object *ptr_obj);
-int ft_parser_arch64(t_object *ptr_obj);
-int ft_cmp_arch64(void *ptr1, void *ptr2);
-int ft_cmp_arch32(void *ptr1, void *ptr2);
-void ft_free_datalist(t_data **head);
-t_data *ft_add_datalist(t_object *ptr_obj, void *ptr_data, int type);
-int ft_event_destructor(t_object *ptr_obj);
-int  ft_event_fat_hendler(t_object *ptr_obj);
-int ft_pars_archv(t_object *ptr_obj);
-void ft_print_arch64(t_object *ptr_obj);
-int  ft_parser_arch32(t_object *ptr_obj);
-void ft_print_arch32(t_object *ptr_obj);
-uint8_t ft_get_func_type64(t_data *ptr_data, uint8_t type, uint8_t n_sect);
-void ft_print_archv(t_object *ptr_obj);
-int get_archv_arch64(t_object *ptr_obj, void *ptr);
-int get_archv_arch32(t_object *ptr_obj, void *ptr);
-int ft_object_event_hendler(t_object *ptr_obj);
-void ft_puthexaddr(unsigned long long int hex);
-void ft_puthex_byt(unsigned char hex);
-void ft_print_arch64_hex(t_object *ptr_obj);
-void ft_print_arch32_hex(t_object *ptr_obj);
-int ft_print_hex(unsigned char *str, size_t size);
-
+void						ft_event_init(t_object *ptr_obj);
+int							ft_error(char *msg, char *param);
+void						ft_object_cronstructor(t_object *ptr_obj);
+int							ft_destructor_mtd(t_object *ptr_obj);
+int							ft_constructor_mtd(t_object *ptr_obj);
+int							ft_parser_arch64(t_object *ptr_obj);
+int							ft_cmp_arch64(void *ptr1, void *ptr2);
+int							ft_cmp_arch32(void *ptr1, void *ptr2);
+void						ft_free_datalist(t_data **head);
+t_data						*ft_add_datalist(t_object *ptr_obj,
+									void *ptr_data, int type);
+int							ft_event_destructor(t_object *ptr_obj);
+int							ft_event_fat_hendler(t_object *ptr_obj);
+int							ft_pars_archv(t_object *ptr_obj);
+void						ft_print_arch64(t_object *ptr_obj);
+int							ft_parser_arch32(t_object *ptr_obj);
+void						ft_print_arch32(t_object *ptr_obj);
+uint8_t						ft_get_func_type64(t_data *ptr_data,
+								uint8_t type, uint8_t n_sect);
+void						ft_print_archv(t_object *ptr_obj);
+int							get_archv_arch64(t_object *ptr_obj, void *ptr);
+int							get_archv_arch32(t_object *ptr_obj, void *ptr);
+int							ft_object_event_hendler(t_object *ptr_obj);
+void						ft_puthexaddr(unsigned long long int hex);
+void						ft_puthex_byt(unsigned char hex);
+void						ft_print_arch64_hex(t_object *ptr_obj);
+void						ft_print_arch32_hex(t_object *ptr_obj);
+int							ft_print_hex(unsigned char *str, size_t size);
+int							ft_get_print_data32(t_object *ptr_obj,
+								struct symtab_command *tab);
+int							ft_long_count(unsigned long long int nbr);
 
 #endif

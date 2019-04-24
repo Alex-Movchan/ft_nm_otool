@@ -6,7 +6,7 @@
 /*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/24 01:10:11 by amovchan          #+#    #+#             */
-/*   Updated: 2019/04/24 01:32:16 by amovchan         ###   ########.fr       */
+/*   Updated: 2019/04/25 00:14:46 by amovchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static t_data	*ft_add_data_to_list(t_data **head)
 }
 
 static void		ft_search_in_list(t_data **head,
-			t_data *ptr_data, int(*cmp)(void*, void*))
+			t_data *ptr_data, int (*cmp)(void*, void*))
 {
 	t_data	*tmp;
 	t_data	*prev;
@@ -75,7 +75,7 @@ static void		ft_search_in_list(t_data **head,
 }
 
 static t_data	*ft_add_data_to_sorted_list(t_data **head,
-			void *ptr_data, int(*cmp) (void *, void *))
+			void *ptr_data, int (*cmp) (void *, void *))
 {
 	t_data	*ptr;
 
